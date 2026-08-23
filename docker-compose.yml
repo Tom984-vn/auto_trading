@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  dnse_auto_trading:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dnse_auto_trading_bot
+    restart: always
+    environment:
+      - TZ=Asia/Ho_Chi_Minh
+    env_file:
+      - .env
+    volumes:
+      - ./logs:/app/logs
+      - ./config/rules.json:/app/config/rules.json
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"

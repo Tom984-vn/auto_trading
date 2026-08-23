@@ -1,0 +1,48 @@
+{
+  "version": "1.0",
+  "updated_at": "2026-08-23",
+  "rules": [
+    {
+      "id": "RULE-SSI-001",
+      "symbol": "SSI",
+      "active": true,
+      "condition_type": "STOP_LOSS",
+      "trigger_price": 26500,
+      "comparison": "<=",
+      "order_side": "NS",
+      "order_type": "LO",
+      "order_price": 26400,
+      "quantity": 1000,
+      "server_side_stop": true,
+      "description": "Cắt lỗ SSI khi giá khớp xuống dưới 26.500 VND/CP"
+    },
+    {
+      "id": "RULE-SSI-002",
+      "symbol": "SSI",
+      "active": true,
+      "condition_type": "TAKE_PROFIT",
+      "trigger_price": 32000,
+      "comparison": ">=",
+      "order_side": "NS",
+      "order_type": "LO",
+      "order_price": 31900,
+      "quantity": 1000,
+      "server_side_stop": false,
+      "description": "Chốt lời SSI khi giá khớp chạm hoặc vượt 32.000 VND/CP"
+    },
+    {
+      "id": "RULE-HPG-001",
+      "symbol": "HPG",
+      "active": true,
+      "condition_type": "PRICE_BREAKOUT",
+      "trigger_price": 29000,
+      "comparison": ">=",
+      "order_side": "NB",
+      "order_type": "LO",
+      "order_price": 29100,
+      "quantity": 500,
+      "server_side_stop": false,
+      "description": "Mua vượt đỉnh HPG khi giá vượt 29.000 VND/CP"
+    }
+  ]
+}
