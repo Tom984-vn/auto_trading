@@ -65,13 +65,16 @@ class TriggerEngine:
                 )
                 self.triggered_rule_ids.add(rule_id)
 
-                # Tạo request đặt lệnh
+                # Xử lý an toàn giá đặt lệnh: nếu json khai báo order_price thì lấy, nếu không lấy giá khớp hiện tại
+                raw_order_price = rule.get("order_price")
+                exec_price = float(raw_order_price) if raw_order_price is not None else float(current_price)
+
                 order_req = PlaceOrderRequest(
                     accountNo=settings.DNSE_ACCOUNT_NO,
-                    symbol=rule["symbol"],
-                    side=rule["order_side"],
-                    orderType=rule.get("order_type", "LO"),
-                    price=float(rule.get("order_price", current_price)),
+                    symbol=str(rule["symbol"]).upper(),
+                    side=str(rule["order_side"]).upper(),        # "NB" (Mua) hoặc "NS" (Bán)
+                    orderType=str(rule.get("order_type", "LO")).upper(),  # "LO", "MP", "MTL"
+                    price=exec_price,
                     quantity=int(rule["quantity"]),
                     loanPackageId=settings.DNSE_LOAN_PACKAGE_ID,
                     marketId="UNDERLYING"

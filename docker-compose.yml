@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   dnse_auto_trading:
     build:

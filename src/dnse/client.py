@@ -55,6 +55,28 @@ class DNSEClient:
             app_logger.exception(f"Ngoại lệ khi gọi API đăng nhập DNSE: {e}")
             return False
 
+    def request_email_otp(self) -> bool:
+        """Yêu cầu DNSE gửi mã OTP xác thực về Email đăng ký"""
+        if not self.is_jwt_valid():
+            app_logger.error("Cần đăng nhập JWT Token thành công trước khi yêu cầu gửi Email OTP!")
+            return False
+
+        url = f"{self.base_url}/auth-service/v1/send-otp"
+        payload = {"type": "EMAIL"}
+
+        try:
+            app_logger.info("Đang yêu cầu DNSE gửi mã OTP về Email...")
+            resp = self.session.post(url, json=payload, timeout=10)
+            if resp.status_code in [200, 201]:
+                app_logger.success("Yêu cầu gửi Email OTP thành công! Đang chờ email về Gmail...")
+                return True
+            else:
+                app_logger.warning(f"Gửi yêu cầu Email OTP: Code {resp.status_code}, Resp: {resp.text}")
+                return False
+        except Exception as e:
+            app_logger.error(f"Ngoại lệ khi yêu cầu gửi Email OTP: {e}")
+            return False
+
     def verify_otp(self, otp_code: str) -> bool:
         """Lớp 2: Gửi mã OTP thu được từ Telegram/User để lấy trading-token"""
         if not self.is_jwt_valid():
@@ -79,12 +101,17 @@ class DNSEClient:
             app_logger.exception(f"Ngoại lệ khi xác thực OTP: {e}")
             return False
 
+
+
+#Place real order here
     def place_order(self, order_req: PlaceOrderRequest) -> Optional[PlaceOrderResponse]:
         """Gửi lệnh mua/bán khớp trực tiếp trên chứng khoán cơ sở"""
         if not self.is_trading_token_valid():
             app_logger.error("Không thể đặt lệnh vì Trading Token 2FA chưa có hoặc đã hết hạn!")
             return None
 
+
+#TRASH -----------------------------
         if not settings.ENABLE_LIVE_TRADING:
             app_logger.warning(f"[DRY-RUN / DRY TRADING] Giả lập đặt lệnh {order_req.side} {order_req.quantity} {order_req.symbol} @ {order_req.price} (Live trading disabled)")
             return PlaceOrderResponse(
@@ -92,7 +119,7 @@ class DNSEClient:
                 status="SUCCESS",
                 message="Lệnh giả lập thành công (Dry-run)"
             )
-
+#-----------------------------------
         url = f"{self.base_url}/order-service/v1/orders"
         headers = {
             "Authorization": f"Bearer {self.trading_token}"

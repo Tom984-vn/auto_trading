@@ -73,8 +73,25 @@ DNSE_ACCOUNT_NO=0001XXXXXX
 TELEGRAM_BOT_TOKEN=123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ
 TELEGRAM_CHAT_ID=123456789
 
+# Cấu hình Tự động 100% Đọc OTP qua Gmail
+USE_GMAIL_AUTO_OTP=true
+GMAIL_USER=your_email@gmail.com
+GMAIL_APP_PASSWORD=abcd-efgh-ijkl-mnop # Mật khẩu ứng dụng Google 16 ký tự
+
 ENABLE_LIVE_TRADING=false  # Chế độ thử nghiệm Dry-run (mặc định false). Đổi true khi chạy thật.
 ```
+
+### 💡 Hướng dẫn tạo Google App Password (Mật khẩu ứng dụng Gmail 16 ký tự):
+
+để Bot có thể tự đăng nhập vào Gmail lấy OTP 100% tự động mà không bị Google chặn:
+
+1. Truy cập vào **[Tài khoản Google của bạn](https://myaccount.google.com/)**.
+2. Chọn mục **Bảo mật (Security)** ➔ Đảm bảo đã bật **Xác minh 2 bước (2-Step Verification)**.
+3. Tìm từ khóa **"Mật khẩu ứng dụng" (App passwords)** trong ô tìm kiếm ở trên cùng (hoặc truy cập `https://myaccount.google.com/apppasswords`).
+4. Nhập tên ứng dụng (ví dụ: `AutoTradingBot`) ➔ Bấm **Tạo (Create)**.
+5. Google sẽ hiện chuỗi **16 ký tự** (ví dụ: `abcd efgh ijkl mnop`). Bạn copy 16 ký tự này (không bao gồm khoảng trắng) dán vào biến `GMAIL_APP_PASSWORD` trong file `.env`.
+
+---
 
 ### 2. Cấu hình Quy tắc Lệnh Điều kiện `config/rules.json`
 Tệp `config/rules.json` định nghĩa các mã cổ phiếu và điều kiện kích hoạt:

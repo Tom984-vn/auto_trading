@@ -15,9 +15,10 @@ class DNSEConditionalOrderManager:
     def place_conditional_order(self, cond_req: ConditionalOrderRequest) -> Optional[ConditionalOrderResponse]:
         """Gửi lệnh điều kiện lên server DNSE (category: STOP cho Cắt lỗ / Chốt lời cứng)"""
         if not self.client.is_trading_token_valid():
-            app_logger.error("Không thể đẩy lệnh điều kiện lên DNSE vì thiếu Trading Token!")
+            app_logger.error("Không thể đẩy lệnh điều kiện lên DNSE vì thiếu Trading Token!") 
             return None
 
+#TRASH -------------------
         if not settings.ENABLE_LIVE_TRADING:
             app_logger.warning(f"[DRY-RUN] Giả lập đẩy lệnh điều kiện Server DNSE cho {cond_req.symbol}: {cond_req.condition}")
             return ConditionalOrderResponse(
@@ -26,7 +27,7 @@ class DNSEConditionalOrderManager:
                 status="PENDING",
                 condition=cond_req.condition
             )
-
+#------------------------
         headers = {
             "Authorization": f"Bearer {self.client.trading_token}",
             "Content-Type": "application/json"
@@ -62,11 +63,30 @@ class DNSEConditionalOrderManager:
         if not self.client.is_jwt_valid():
             return []
 
+        headers = {
+            "Authorization": f"Bearer {self.client.jwt_token}"
+        }
+
         try:
-            resp = self.client.session.get(self.endpoint, timeout=10)
+            resp = self.client.session.get(self.endpoint, headers=headers, timeout=10)
             if resp.status_code == 200:
-                return resp.json().get("data", [])
+                data = resp.json()
+                if isinstance(data, list):
+                    return data
+                elif isinstance(data, dict):
+                    return data.get("data", []) or data.get("orders", [])
             return []
         except Exception as e:
             app_logger.error(f"Ngoại lệ khi lấy sổ lệnh điều kiện DNSE: {e}")
             return []
+
+    def is_order_already_on_server(self, symbol: str, stop_price: float, side: str) -> bool:
+        """Kiểm tra xem lệnh điều kiện tương tự đã tồn tại trên Server DNSE chưa"""
+        active_orders = self.get_active_conditional_orders()
+        for order in active_orders:
+            if order.get("symbol") == symbol and order.get("status") in ["ACTIVE", "PENDING"]:
+                props = order.get("props", {})
+                target = order.get("targetOrder", {})
+                if float(props.get("stopPrice", 0)) == stop_price and target.get("side") == side:
+                    return True
+        return False

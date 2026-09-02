@@ -18,6 +18,12 @@ class Settings(BaseSettings):
     TELEGRAM_BOT_TOKEN: str = Field(default="")
     TELEGRAM_CHAT_ID: str = Field(default="")
 
+    # Gmail Auto-OTP Configuration (100% Automated Auth)
+    GMAIL_IMAP_SERVER: str = Field(default="imap.gmail.com")
+    GMAIL_USER: str = Field(default="")
+    GMAIL_APP_PASSWORD: str = Field(default="")
+    USE_GMAIL_AUTO_OTP: bool = Field(default=True)
+
     # Risk Management Settings
     MAX_ORDER_VALUE: float = Field(default=500_000_000.0)  # Max VND per order
     MAX_DAILY_LOSS: float = Field(default=50_000_000.0)   # Max loss VND per day

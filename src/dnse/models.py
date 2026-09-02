@@ -56,7 +56,7 @@ class ConditionalOrderRequest(BaseModel):
     condition: str = Field(description="e.g. price <= 26500")
     props: ConditionalOrderProps
     targetOrder: TargetOrder
-    timeInForce: Optional[TimeInForce] = None
+    timeInForce: TimeInForce = Field(default_factory=lambda: TimeInForce(kind="GTD"))
 
 class ConditionalOrderResponse(BaseModel):
     id: str
